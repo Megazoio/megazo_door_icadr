@@ -1,0 +1,16 @@
+<?xml version='1.0' ?>
+
+<launch>
+  <arg name="use_sim_time" default="false"/>
+
+  <node pkg="megazo_door_icadr"
+        exec="door_adapter"        
+        args="-c /home/rmf/git_ws/src/megazo_door_icadr/config.yaml"
+        output="both">
+
+    <param name="use_sim_time" value="$(var use_sim_time)"/>
+
+  </node>
+
+
+</launch>

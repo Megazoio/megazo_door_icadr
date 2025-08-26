@@ -1,0 +1,24 @@
+# MEGAZO RMF door parameters
+
+door:
+  name: "Megazo_door" #INSERT DOOR NAME HERE. IT MUST MIRROR DOOR NAME ON RMF TRAFFIC EDITOR.
+  api_endpoint: "CONTACT hello@megazo.io for credentials"
+  mqtt_endpoint: "CONTACT hello@megazo.io for credentials"
+  mqtt_port: CONTACT hello@megazo.io for credentials
+  mqtt_topic: CONTACT hello@megazo.io for credentials
+  username: "CONTACT hello@megazo.io for credentials"
+  password: "CONTACT hello@megazo.io for credentials"
+  mqtt_password: 'CONTACT hello@megazo.io for credentials'
+  mqtt_client_id: 'CONTACT hello@megazo.io for credentials'
+  project_id: CONTACT hello@megazo.io for credentials
+  ICED_id: CONTACT hello@megazo.io for credentials
+
+  door_signal_period: 3.0 # Seconds
+  door_close_feature: True # True if door close API is available
+
+door_subscriber:
+  topic_name: "adapter_door_requests"
+
+door_publisher:
+  topic_name: "door_states"
+  door_state_publish_period: 1.0 # Seconds
