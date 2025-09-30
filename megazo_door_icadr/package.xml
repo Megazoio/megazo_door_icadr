@@ -4,9 +4,9 @@
   <name>megazo_door_icadr</name>
   <version>0.0.0</version>
   <description>RMF Door Adapter for Megazo ICADR</description>
-  <maintainer email="hello@megazo.io">nv</maintainer>
+  <maintainer email="hello@megazo.io"></maintainer>
   <license>Apache License 2.0</license>
-  
+
   <exec_depend>rclpy</exec_depend>
   <exec_depend>rmf_door_msgs</exec_depend>
   <exec_depend>python3-requests</exec_depend>

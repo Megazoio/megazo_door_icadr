@@ -6,20 +6,24 @@ from urllib.error import HTTPError
 namespace = '{http://www.w3.org/1999/xhtml}'
 
 class DoorClientAPI:
+    def __init__(self, node, config):
+        self.name = 'rmf_door_adapter'
+        self.timeout = 5  # seconds
+        self.debug = False
+        self.connected = False
+        self.node = node
+        self.config = config  # use this config to establish connection
 
-    def __init__(self,url,username,password,project_id,ICED_id):
-        self.prefix = url
-        self.timeout = 5.0
-        self.user = username
-        self.passcode = password
-        self.projectID = project_id
-        self.ID = ICED_id
+        self.prefix = self.config["api_endpoint"]
+        self.user = self.config["username"]
+        self.passcode = self.config["password"]
+        self.projectID = self.config["project_id"]
         self.token = ''
 
         count = 0
         self.connected = True
         while not self.check_connection():
-            if count >= 5:
+            if count >= self.timeout:
                 print("Unable to connect to door client API.")
                 self.connected = False
                 break
@@ -28,12 +32,10 @@ class DoorClientAPI:
                 count += 1
             time.sleep(1)
 
-
     def check_connection(self):
         if self.Login():
             if self.ProjectSignIn():
-                if self.check_device_online():
-                    return True
+                return True
         return False
 
 
@@ -81,7 +83,8 @@ class DoorClientAPI:
         return False
 
 
-    def check_device_online(self):
+    def check_device_online(self, door_id) -> int:
+    
         url = self.prefix + '/API/ICED/GetICEDList'
         data = {}
         data['UserID'] = self.user
@@ -93,9 +96,9 @@ class DoorClientAPI:
 
             if data['IsSuccess'] == True:
                 for i in range(len(data['data'])):
-                    if data['data'][i]['ID'] == self.ID:
+                    if data['data'][i]['ICEDName'] == door_id:
                         if data['data'][i]['ControllerStatus'] == 1:
-                            return True
+                            return data['data'][i]['ID']
                         break
             
             print(f'API: Device is offline')
@@ -104,16 +107,16 @@ class DoorClientAPI:
             print(f'HTTP error during check_device_online: {http_err}')
         except Exception as err:
             print(f'Other error during check_device_online: {err}')
-        return False
+        return None
 
 
-    def open_door(self):
+    def open_door(self, iced_id):
         ''' Return True if the door API server is successful receive open door command'''
         url = self.prefix + '/API/Device/ICED/ControlDoor'
         data = {}
         data['UserID'] = self.user
         data['Token'] = self.token
-        data['data'] = {'IDs': [self.ID], 'Operate': 1}
+        data['data'] = {'IDs': [iced_id], 'Operate': 1}
 
         try:
             response = requests.post(url, timeout=self.timeout, json=data)
@@ -131,13 +134,13 @@ class DoorClientAPI:
         return False
 
 
-    def close_door(self):
+    def close_door(self, iced_id):
         ''' Return True if the door API server is successful receive open door command'''
         url = self.prefix + '/API/Device/ICED/ControlDoor'
         data = {}
         data['UserID'] = self.user
         data['Token'] = self.token
-        data['data'] = {'IDs': [self.ID], 'Operate': 2}
+        data['data'] = {'IDs': [iced_id], 'Operate': 2}
 
         try:
             response = requests.post(url, timeout=self.timeout, json=data)
@@ -153,40 +156,6 @@ class DoorClientAPI:
         except Exception as err:
             print(f'Other error during Close Door: {err}')
         return False
-
-
-    # NOT IN USE. USING MQTT TO GET STATUS.
-    def get_mode(self):        
-        ''' Return the door status with reference rmf_door_msgs. 
-            Return DoorMode.MODE_CLOSED when door status is closed.
-            Return DoorMode.MODE_MOVING when door status is moving.
-            Return DoorMode.MODE_OPEN when door status is open.
-            Return DoorMode.MODE_OFFLINE when door status is offline.
-            Return DoorMode.MODE_UNKNOWN when door status is unknown'''
-        url = self.prefix + '/API/ICED/GetICEDList'
-        data = {}
-        data['UserID'] = self.user
-        data['Token'] = self.token
-
-        try:
-            response = requests.post(url, timeout=self.timeout, json=data)
-            data = response.json()
-
-            if data['IsSuccess'] == True:
-                for i in range(len(data['data'])):
-                    if data['data'][i]['ID'] == self.ID:
-                        if data['data'][i]['DoorOpenStatus'] == 1:
-                            return DoorMode.MODE_OPEN
-                        else:
-                            return DoorMode.MODE_CLOSED
-            else:
-                print(f'API: Door get_mode Failed')
-
-        except HTTPError as http_err:
-            print(f'HTTP error during Door get_mode: {http_err}')
-        except Exception as err:
-            print(f'Other error during Door get_mode: {err}')
-        return DoorMode.MODE_UNKNOWN
 
 
     def sys_ping(self):
@@ -209,6 +178,4 @@ class DoorClientAPI:
         except Exception as err:
             print(f'Other error during System Ping: {err}')
         return False  
-
-        
 
