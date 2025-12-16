@@ -8,7 +8,7 @@ Contact hello@megazo.io for more details.
 ROS2 Humble
 
 # Configurations
-Contact hello@megazo.io for log in credentials to be inserted in [config.yaml](megazo_door_icadr/config.yaml)
+Contact hello@megazo.io for log in credentials to be inserted in [config.yaml](door_adapter_megazo/config.yaml)
 
 # Build
 source /opt/ros/humble/setup.bash  
@@ -16,5 +16,5 @@ colcon build
 
 # Run
 source ~/xx_ws/install/setup.bash  
-ros2 launch megazo_door_icadr run.launch.xml
+ros2 launch door_adapter_megazo run.launch.xml
 

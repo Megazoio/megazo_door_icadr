@@ -6,7 +6,7 @@ import time
 import threading
 
 import rclpy
-from megazo_door_icadr.DoorClientAPI import DoorClientAPI
+from door_adapter_megazo.DoorClientAPI import DoorClientAPI
 from rclpy.node import Node
 from rmf_door_msgs.msg import DoorRequest, DoorState, DoorMode
 
