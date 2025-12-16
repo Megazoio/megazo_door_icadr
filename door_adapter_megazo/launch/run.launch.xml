@@ -2,10 +2,11 @@
 
 <launch>
   <arg name="use_sim_time" default="false"/>
+  <arg name="config_file" default="/door_adapter_megazo_ws/src/door_adapter_megazo/configs/config.yaml"/>
 
   <node pkg="door_adapter_megazo"
         exec="door_adapter"        
-        args="-c /door_adapter_megazo_ws/src/door_adapter_megazo/config.yaml"
+        args="-c $(var config_file)"
         output="both">
 
     <param name="use_sim_time" value="$(var use_sim_time)"/>
