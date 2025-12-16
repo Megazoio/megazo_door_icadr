@@ -1,12 +1,13 @@
 <?xml version='1.0' ?>
 
 <launch>
+  <arg name="log_level" default="INFO"/>
   <arg name="use_sim_time" default="false"/>
   <arg name="config_file" default="/door_adapter_megazo_ws/src/door_adapter_megazo/configs/config.yaml"/>
 
   <node pkg="door_adapter_megazo"
         exec="door_adapter"        
-        args="-c $(var config_file)"
+        args="-c $(var config_file) --ros-args --log-level door_adapter_megazo:=$(var log_level)"
         output="both">
 
     <param name="use_sim_time" value="$(var use_sim_time)"/>
