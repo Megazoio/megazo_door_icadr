@@ -10,7 +10,7 @@ from paho.mqtt.packettypes import PacketTypes
 
 import rclpy
 from rclpy.node import Node
-from rmf_door_msgs.msg import DoorRequest, DoorState, DoorMode
+from rmf_door_msgs.msg import DoorMode,DoorState, DoorRequest 
 
 from door_adapter_megazo.DoorClientAPI import DoorClientAPI
 from door_adapter_megazo.utils.Constants import NODE_NAME, MQTT_EVENTTYPE
@@ -27,7 +27,7 @@ class DoorAdapter(Node):
         self.doors = {}
         for key, value in config_yaml['doors'].items():
             self.get_logger().debug(f'Adding door: [ {key} ]')
-            self.get_logger().debug(f'Door Data = [ {value} ]')
+            self.get_logger().debug(f'Door Properties: [ {value} ]')
             self.doors[key] = value
             # Default door mode is CLOSED.
             self.doors[key]['door_mode'] = DoorMode.MODE_CLOSED
@@ -58,7 +58,7 @@ class DoorAdapter(Node):
 
         assert self.api.connected, "Unable to establish connection with door"
 
-        # open door flag
+        # Open door flag
         self.open_door = False
         self.check_status = True #ensure initial door state is correct
         
@@ -71,7 +71,7 @@ class DoorAdapter(Node):
         self.periodic_timer = self.create_timer(
             self.door_state_publish_period, self.time_cb)
 
-        #MQTT
+        # MQTT
         # Create the MQTT client instance
         client = mqtt.Client(client_id=mqtt_client_id, protocol=mqtt.MQTTv5, transport='websockets')
         client.username_pw_set(username,mqtt_password)
@@ -96,7 +96,7 @@ class DoorAdapter(Node):
             self.get_logger().error('MQTT Connection - [ FAILED ]')
             exit(1) #Should quit or raise flag to quit or retry
 
-        #subscribe
+        # Subscribe to MQTT Topic
         client.subscribe(mqtt_topic, qos=0)
 
         client.loop_start() #start the loop
@@ -126,7 +126,6 @@ class DoorAdapter(Node):
         elif mqttEvent == 1019:
             self.doors[detected_device_name]['door_mode'] = DoorMode.MODE_OPEN
 
-
     def on_connect_mqtt(self, client, userdata, flags, rc, properties):
         if rc==0:
             self.get_logger().warn("Connection to MQTT Broker - [ SUCCESS ]")
@@ -136,7 +135,6 @@ class DoorAdapter(Node):
     def on_disconnect(self, client, userdata, reasonCode, properties):
         self.get_logger().error(f"Disconnected: {reasonCode}")
 
-
     def door_open_command_request(self, door_name: str):
         while self.open_door:
             success = self.api.open_door(self.doors[door_name]['ICED_id'])
@@ -145,7 +143,6 @@ class DoorAdapter(Node):
             else:
                 self.get_logger().warn(f"Request to open door [{door_name}] is unsuccessful")
             time.sleep(self.doors[door_name]['door_signal_period'])
-
 
     def time_cb(self):
         assert self.api.sys_ping(), "Unable to ping connection with door"
@@ -157,7 +154,6 @@ class DoorAdapter(Node):
             state_msg.door_name = door_name
             state_msg.current_mode.value = self.doors[door_name]['door_mode']
             self.door_states_pub.publish(state_msg)
-
 
     def door_request_cb(self, msg: DoorRequest):
         # when door node receive open request, the door adapter will send open command to API
