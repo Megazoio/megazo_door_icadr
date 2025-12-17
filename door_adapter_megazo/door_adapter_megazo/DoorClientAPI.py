@@ -105,17 +105,16 @@ class DoorClientAPI:
                 for i in range(len(data['data'])):
                     for _, device_data in self.devices.items():
                         if data['data'][i]['ID'] == device_data['ICED_id']:
-                            if data['data'][i]['ControllerStatus'] == 1:
-                                return True
+                            if data['data'][i]['ControllerStatus'] == 0:
+                                self.logger.error(f"API: Device [ {data['data'][i]['ICEDName']} ] - [ OFFLINE ]")
+                                return False
                             break
-
-            self.logger.error(f'API: Device is offline')
-                
         except HTTPError as http_err:
             self.logger.error(f'HTTP error during check_devices_online: {http_err}')
         except Exception as err:
             self.logger.error(f'Other error during check_devices_online: {err}')
-        return False
+
+        return True
 
 
     def open_door(self, device_ICED_id):
