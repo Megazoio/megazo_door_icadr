@@ -2,8 +2,7 @@ import requests
 import time
 from rmf_door_msgs.msg import DoorMode
 from urllib.error import HTTPError
- 
-namespace = '{http://www.w3.org/1999/xhtml}'
+
 
 class DoorClientAPI:
 
