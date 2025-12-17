@@ -13,14 +13,14 @@ This repository contains the Robotics Middleware Framework (**RMF**) **Door Adap
 It is fully compatible with [RMF](https://github.com/open-rmf/rmf_ros2) and [SS-713](https://www.singaporestandardseshop.sg/Product/SSPdtDetail/4bc72ff7-951f-4a5e-b85f-edafe36a8a3d).
 
 > [!NOTE]  
-> Contact [hello@megazo.io](hello@megazo.io) for more details.
+> Contact [hello@megazo.io](mailto:hello@megazo.io) for more details.
 
 
 # **Dependencies** 📚
 - ROS 2 [Jazzy Jalisco](https://docs.ros.org/en/jazzy/Installation.html)
 
 # **Configurations**
-Contact [hello@megazo.io](hello@megazo.io) to be provided with API credentials which will be inserted in [config.yaml](door_adapter_megazo/config.yaml).
+Contact [hello@megazo.io](mailto:hello@megazo.io) to be provided with API credentials which will be inserted in [config.yaml](door_adapter_megazo/config.yaml).
 
 # **Build** 🔨
 
