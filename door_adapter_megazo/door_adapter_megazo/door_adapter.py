@@ -4,23 +4,22 @@ import json
 import time
 import argparse
 import threading
-
-import rclpy
-from door_adapter_megazo.DoorClientAPI import DoorClientAPI
-from rclpy.node import Node
-from rclpy.time import Time
-from rmf_door_msgs.msg import DoorRequest, DoorState, DoorMode
 import paho.mqtt.client as mqtt
 from paho.mqtt.properties import Properties
 from paho.mqtt.packettypes import PacketTypes 
 
+import rclpy
+from rclpy.node import Node
+from rmf_door_msgs.msg import DoorRequest, DoorState, DoorMode
 
-###############################################################################
+from door_adapter_megazo.DoorClientAPI import DoorClientAPI
+from door_adapter_megazo.utils.Constants import NODE_NAME
+
 
 class DoorAdapter(Node):
     def __init__(self,config_yaml):
-        super().__init__('door_adapter')
-        self.get_logger().info('Starting door adapter...')
+        super().__init__(NODE_NAME)
+        self.get_logger().info(f'Initialising [ {NODE_NAME} ]...')
 
         # Get value from config file
         self.door_name = config_yaml['door']['name']
@@ -42,7 +41,14 @@ class DoorAdapter(Node):
         door_pub = config_yaml['door_publisher']
         door_sub = config_yaml['door_subscriber']
 
-        self.api = DoorClientAPI(url,username,password,project_id,ICED_id, self.get_logger())
+        self.api = DoorClientAPI(
+            url,
+            username,
+            password,
+            project_id,
+            ICED_id,
+            self.get_logger()
+        )
        
         assert self.api.connected, "Unable to establish connection with door"
         
@@ -91,6 +97,7 @@ class DoorAdapter(Node):
 
         client.loop_start() #start the loop
 
+        self.get_logger().info(f'[ {NODE_NAME} ] - [ RUNNING ]...')
 
     def on_message_mqtt(self, client, userdata, msg):
         #print(msg.payload)
@@ -98,7 +105,7 @@ class DoorAdapter(Node):
         msg_=json.loads(decoded_message)
         mqttEvent = msg_['doorEvent']['EventType']
         self.get_logger().info(f"New MQTT Event: = {mqttEvent}")
-        self.get_logger().info(f"{msg_}")
+        self.get_logger().debug(f"{msg_}")
 
         if mqttEvent == 3:
             self.door_mode = DoorMode.MODE_CLOSED
@@ -108,8 +115,7 @@ class DoorAdapter(Node):
 
     def on_connect_mqtt(self, client, userdata, flags, rc, properties):
         if rc==0:
-            self.get_logger().info(f"properties = {properties}")
-            self.get_logger().info("Connected to MQTT Broker")
+            self.get_logger().warn("Connection to MQTT Broker - [ SUCCESS ]")
         else:
             self.get_logger().error(f"Unable to connect to MQTT Broker. Returned Code = {rc}")
 
@@ -121,9 +127,9 @@ class DoorAdapter(Node):
         while self.open_door:
             success = self.api.open_door()
             if success:
-                self.get_logger().info(f"Request to open door [{self.door_name}] is successful")
+                self.get_logger().warn(f"Request to open door [{self.door_name}] is successful")
             else:
-                self.get_logger().warning(f"Request to open door [{self.door_name}] is unsuccessful")
+                self.get_logger().warn(f"Request to open door [{self.door_name}] is unsuccessful")
             time.sleep(self.door_signal_period)
 
 
@@ -143,7 +149,8 @@ class DoorAdapter(Node):
         # If door node receive close request, the door adapter will stop sending open command to API
         # check DoorRequest msg whether the door name of the request is same as the current door. If not, ignore the request
 
-        self.get_logger().warn(f"DOOR REQUEST TRIGGERED... {msg}")
+        self.get_logger().warn(f"Door Request - [ RECEIVED ]")
+        self.get_logger().debug(f"Door Request - {msg}")
         # return
 
         if msg.door_name == self.door_name:
@@ -153,6 +160,7 @@ class DoorAdapter(Node):
                 self.open_door = True
                 self.check_status = True
                 if self.door_close_feature:
+                    self.get_logger().info('Commanding Door - [ OPEN ]')
                     self.api.open_door()
                 else:
                     t = threading.Thread(target = self.door_open_command_request)
@@ -160,8 +168,8 @@ class DoorAdapter(Node):
             elif msg.requested_mode.value == DoorMode.MODE_CLOSED:
                 # close door implementation
                 self.open_door = False
-                self.get_logger().info('Close Command to door received')
                 if self.door_close_feature:
+                    self.get_logger().info('Commanding Door - [ CLOSE ]')
                     self.api.close_door()
             else:
                 self.get_logger().error('Invalid door mode requested. Ignoring...')
@@ -173,7 +181,7 @@ def main(argv=sys.argv):
 
     args_without_ros = rclpy.utilities.remove_ros_args(argv)
     parser = argparse.ArgumentParser(
-        prog="door_adapter",
+        prog=NODE_NAME,
         description="Configure and spin up door adapter for door ")
     parser.add_argument("-c", "--config_file", type=str, required=True,
                         help="Path to the config.yaml file for this door adapter")

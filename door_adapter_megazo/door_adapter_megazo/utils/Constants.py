@@ -1,0 +1,1 @@
+NODE_NAME="door_adapter_megazo"

@@ -62,12 +62,11 @@ class DoorClientAPI:
 
     def ProjectSignIn(self):
         url = self.prefix + '/API/System/ProjectSignIn'
-        self.logger.info(f"url = {url}")
         data = {}
         data['UserID'] = self.user
         data['Token'] = self.token
         data['data'] = {'ProjectID': self.projectID}
-        self.logger.info(f"payload = {data}")
+        self.logger.debug(f"payload = {data}")
         try:
             response = requests.post(url, timeout=self.timeout, json=data)
             data = response.json()
