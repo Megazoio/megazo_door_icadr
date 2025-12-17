@@ -1,34 +1,24 @@
- 
-# RMF door parameters
+# MEGAZO RMF Door Parameters
 
-doors:
-  "INSERT MEGAZO DOOR NAME HERE":  # Ensure door name mirrors its name on Megazo server and RMF traffic editor
-    door_auto_closes: False # Set to True if door remains closed until requested open, and automatically closes if it does not receive subsequent open requests.
-    door_signal_period: 3.0 # Time taken for door signal to be effective, in seconds.
-    continuous_status_polling: False # Whether to keep checking door state when there are no requests
-    # NOTE: door_close_feature is [DEPRECATED], use door_auto_closes instead
-  "INSERT MEGAZO DOOR NAME HERE":  # Ensure door name mirrors its name on Megazo server and RMF traffic editor
-    door_auto_closes: False # Set to True if door remains closed until requested open, and automatically closes if it does not receive subsequent open requests.
-    door_signal_period: 3.0 # # Time taken for door signal to be effective, in seconds.
-    continuous_status_polling: False # Whether to keep checking door state when there are no requests
+door:
+  name: "XXXXXXXXXXXXXX" #INSERT DOOR NAME HERE. IT MUST MIRROR DOOR NAME ON RMF TRAFFIC EDITOR.
+  api_endpoint: "https://www.evcard.cc:8181"
+  mqtt_endpoint: "www.evcard.cc"
+  mqtt_port: 8090
+  mqtt_topic: ICEDEvent_XX
+  username: "XXXXXXXXXXXXXX"
+  password: "XXXXXXXXXXXXXX"
+  mqtt_password: 'XXXXXXXXXXXXXX'
+  mqtt_client_id: 'XXXXXXXXXXXXXX'
+  project_id: XXXXXXXXXXXXXX
+  ICED_id: XXXXXXXXXXXXXX
+
+  door_signal_period: 3.0 # Seconds
+  door_close_feature: True # True if door close API is available
 
 door_subscriber:
   topic_name: "adapter_door_requests"
 
 door_publisher:
   topic_name: "door_states"
-  door_state_publish_period: 30.0 # Seconds # This is the system ping to keep door connection alive. Door state publisher is handled by mqtt event
-
-mock: False
-
-api_endpoint: "CONTACT hello@megazo.io for credentials"
-mqtt_endpoint: "CONTACT hello@megazo.io for credentials"
-mqtt_port: CONTACT hello@megazo.io for credentials
-mqtt_topic: CONTACT hello@megazo.io for credentials #ICEDEvent_projectid
-
-username: "CONTACT hello@megazo.io for credentials"
-password: "CONTACT hello@megazo.io for credentials" #api password
-mqtt_password: 'CONTACT hello@megazo.io for credentials'
-mqtt_client_id: 'CONTACT hello@megazo.io for credentials'
-
-project_id: CONTACT hello@megazo.io for credentials
+  door_state_publish_period: 1.0 # Seconds
