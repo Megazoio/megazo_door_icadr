@@ -11,13 +11,13 @@ It is fully compatible with [RMF](https://github.com/open-rmf/rmf_ros2) and [SS-
 > Contact [hello@megazo.io](hello@megazo.io) for more details.
 
 
-# **Dependencies**
+# **Dependencies** 📚
 - ROS 2 [Jazzy Jalisco](https://docs.ros.org/en/jazzy/Installation.html)
 
 # **Configurations**
 Contact [hello@megazo.io](hello@megazo.io) to be provided with API credentials which will be inserted in [config.yaml](door_adapter_megazo/config.yaml).
 
-# **Build**
+# **Build** 🔨
 
 1. **Download** `door_adapter_megazo` repository:
 
@@ -31,7 +31,7 @@ git clone https://github.com/MEGAZO-io/door_adapter_megazo.git --depth 1 --singl
 docker build -t door_adapter_megazo:icadr .
 ```
 
-# **Run**
+# **Run** ⚙️
 
 ```bash
 docker run -it --rm \
@@ -41,3 +41,15 @@ docker run -it --rm \
 door_adapter_megazo:icadr bash -c "source /ros_entrypoint.sh && ros2 launch door_adapter_megazo run.launch.xml"
 ```
 
+# **Verify** ✅
+
+Upon running the command above, you should see a terminal output similar to what is shown below:
+
+```bash
+[INFO] [launch]: All log files can be found below /root/.ros/log/2025-12-17-14-18-12-752985-bastion-1
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [door_adapter-1]: process started with pid [33]
+[door_adapter-1] [INFO] [1765981093.171074943] [door_adapter_megazo]: Initialising [ door_adapter_megazo ]...
+[door_adapter-1] [INFO] [1765981093.490804805] [door_adapter_megazo]: [ door_adapter_megazo ] - [ RUNNING ]...
+[door_adapter-1] [WARN] [1765981093.508577969] [door_adapter_megazo]: Connection to MQTT Broker - [ SUCCESS ]
+```
