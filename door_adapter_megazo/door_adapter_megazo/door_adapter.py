@@ -13,7 +13,7 @@ from rclpy.node import Node
 from rmf_door_msgs.msg import DoorRequest, DoorState, DoorMode
 
 from door_adapter_megazo.DoorClientAPI import DoorClientAPI
-from door_adapter_megazo.utils.Constants import NODE_NAME
+from door_adapter_megazo.utils.Constants import NODE_NAME, MQTT_EVENTRESULT, MQTT_EVENTTYPE
 
 
 class DoorAdapter(Node):
@@ -26,10 +26,11 @@ class DoorAdapter(Node):
         self.door_close_feature = config_yaml['door']['door_close_feature']
         self.door_signal_period = config_yaml['door']['door_signal_period']
         self.door_state_publish_period = config_yaml['door_publisher']['door_state_publish_period']
-        
-        url = config_yaml['door']['api_endpoint']
-        mqtt_endpoint = config_yaml['door']['mqtt_endpoint']
-        mqtt_port = config_yaml['door']['mqtt_port']
+
+        url = config_yaml['api_endpoint']
+        mqtt_endpoint = config_yaml['mqtt_endpoint']
+        mqtt_port = config_yaml['mqtt_port']
+
         mqtt_topic = config_yaml['door']['mqtt_topic']
         username = config_yaml['door']['username']
         password = config_yaml['door']['password']
@@ -89,7 +90,7 @@ class DoorAdapter(Node):
 
         except Exception as e:
             self.get_logger().error(f"{e}")
-            self.get_logger().error('MQTT connection fail')
+            self.get_logger().error('MQTT Connection - [ FAILED ]')
             exit(1) #Should quit or raise flag to quit or retry
 
         #subscribe
@@ -104,7 +105,7 @@ class DoorAdapter(Node):
         decoded_message=str(msg.payload.decode("utf-8"))
         msg_=json.loads(decoded_message)
         mqttEvent = msg_['doorEvent']['EventType']
-        self.get_logger().info(f"New MQTT Event: = {mqttEvent}")
+        self.get_logger().info(f"Detected New MQTT Event - [ {MQTT_EVENTTYPE[mqttEvent]} ]")
         self.get_logger().debug(f"{msg_}")
 
         if mqttEvent == 3:
@@ -149,9 +150,8 @@ class DoorAdapter(Node):
         # If door node receive close request, the door adapter will stop sending open command to API
         # check DoorRequest msg whether the door name of the request is same as the current door. If not, ignore the request
 
-        self.get_logger().warn(f"Door Request - [ RECEIVED ]")
+        self.get_logger().warn(f"dDoor Request - [ RECEIVED ]")
         self.get_logger().debug(f"Door Request - {msg}")
-        # return
 
         if msg.door_name == self.door_name:
             self.get_logger().info(f"Door mode [{msg.requested_mode.value}] requested by {msg.requester_id}")
