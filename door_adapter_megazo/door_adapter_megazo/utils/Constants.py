@@ -1,22 +1,36 @@
-NODE_NAME="door_adapter_megazo"
+# Copyright 2025 MEGAZO Technologies Pte Ltd, All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+NODE_NAME='door_adapter_megazo'
 
 MQTT_EVENTTYPE = {
-            "3":"Door magnetic closure",
-            "4":"Door magnet opens",
-            "5":"Remote door opening event",
-            "7":"The door is always open at the end of the time period",
-            "8":"The door is always open at the beginning of the time period",
-            "11":"Keypad door opening event",
-            "14":"Door forced open alarm",
-            "16":"Power down alarm event",
-            "21":"Trigger door opening event",
-            "22":"Password door opening event",
-            "23":"Swipe card + password to open the door event",
-            "1019":"Unlock the door",
-            "1020":"Close the door lock",
-            "1021":"Unlock the door once",
-            "1022":"Locked door",
-            "1023":"Door Reset"
+            '3': 'Door magnetic closure',
+            '4': 'Door magnet opens',
+            '5': 'Remote door opening event',
+            '7': 'The door is always open at the end of the time period',
+            '8': 'The door is always open at the beginning of the time period',
+            '11': 'Keypad door opening event',
+            '14': 'Door forced open alarm',
+            '16': 'Power down alarm event',
+            '21': 'Trigger door opening event',
+            '22': 'Password door opening event',
+            '23': 'Swipe card + password to open the door event',
+            '1019': 'Unlock the door',
+            '1020': 'Close the door lock',
+            '1021': 'Unlock the door once',
+            '1022': 'Locked door',
+            '1023': 'Door Reset'
         }
 
 # Unused. Preserved in case of feature expansion.
