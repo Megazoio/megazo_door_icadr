@@ -6,13 +6,21 @@ from urllib.error import HTTPError
 
 class DoorClientAPI:
 
-    def __init__(self, url, username, password, project_id, ICED_id, logger):
+    def __init__(
+            self,
+            url,
+            username,
+            password,
+            project_id,
+            devices,
+            logger
+        ):
         self.prefix = url
         self.timeout = 5.0
         self.user = username
         self.passcode = password
         self.projectID = project_id
-        self.ID = ICED_id
+        self.devices = devices
         self.token = ''
         self.logger = logger
 
@@ -32,7 +40,7 @@ class DoorClientAPI:
     def check_connection(self):
         if self.Login():
             if self.ProjectSignIn():
-                if self.check_device_online():
+                if self.check_devices_online():
                     return True
         return False
 
@@ -84,7 +92,7 @@ class DoorClientAPI:
         return False
 
 
-    def check_device_online(self):
+    def check_devices_online(self):
         url = self.prefix + '/API/ICED/GetICEDList'
         data = {}
         data['UserID'] = self.user
@@ -96,27 +104,28 @@ class DoorClientAPI:
 
             if data['IsSuccess'] == True:
                 for i in range(len(data['data'])):
-                    if data['data'][i]['ID'] == self.ID:
-                        if data['data'][i]['ControllerStatus'] == 1:
-                            return True
-                        break
-            
+                    for _, device_data in self.devices.items():
+                        if data['data'][i]['ID'] == device_data['ICED_id']:
+                            if data['data'][i]['ControllerStatus'] == 1:
+                                return True
+                            break
+
             self.logger.error(f'API: Device is offline')
                 
         except HTTPError as http_err:
-            self.logger.error(f'HTTP error during check_device_online: {http_err}')
+            self.logger.error(f'HTTP error during check_devices_online: {http_err}')
         except Exception as err:
-            self.logger.error(f'Other error during check_device_online: {err}')
+            self.logger.error(f'Other error during check_devices_online: {err}')
         return False
 
 
-    def open_door(self):
+    def open_door(self, device_ICED_id):
         ''' Return True if the door API server is successful receive open door command'''
         url = self.prefix + '/API/Device/ICED/ControlDoor'
         data = {}
         data['UserID'] = self.user
         data['Token'] = self.token
-        data['data'] = {'IDs': [self.ID], 'Operate': 1}
+        data['data'] = {'IDs': [device_ICED_id], 'Operate': 1}
 
         try:
             response = requests.post(url, timeout=self.timeout, json=data)
@@ -134,13 +143,13 @@ class DoorClientAPI:
         return False
 
 
-    def close_door(self):
+    def close_door(self, device_ICED_id):
         ''' Return True if the door API server is successful receive open door command'''
         url = self.prefix + '/API/Device/ICED/ControlDoor'
         data = {}
         data['UserID'] = self.user
         data['Token'] = self.token
-        data['data'] = {'IDs': [self.ID], 'Operate': 2}
+        data['data'] = {'IDs': [device_ICED_id], 'Operate': 2}
 
         try:
             response = requests.post(url, timeout=self.timeout, json=data)
@@ -156,40 +165,6 @@ class DoorClientAPI:
         except Exception as err:
             self.logger.error(f'Other error during Close Door: {err}')
         return False
-
-
-    # NOT IN USE. USING MQTT TO GET STATUS.
-    def get_mode(self):        
-        ''' Return the door status with reference rmf_door_msgs. 
-            Return DoorMode.MODE_CLOSED when door status is closed.
-            Return DoorMode.MODE_MOVING when door status is moving.
-            Return DoorMode.MODE_OPEN when door status is open.
-            Return DoorMode.MODE_OFFLINE when door status is offline.
-            Return DoorMode.MODE_UNKNOWN when door status is unknown'''
-        url = self.prefix + '/API/ICED/GetICEDList'
-        data = {}
-        data['UserID'] = self.user
-        data['Token'] = self.token
-
-        try:
-            response = requests.post(url, timeout=self.timeout, json=data)
-            data = response.json()
-
-            if data['IsSuccess'] == True:
-                for i in range(len(data['data'])):
-                    if data['data'][i]['ID'] == self.ID:
-                        if data['data'][i]['DoorOpenStatus'] == 1:
-                            return DoorMode.MODE_OPEN
-                        else:
-                            return DoorMode.MODE_CLOSED
-            else:
-                self.logger.error(f'API: Door get_mode Failed')
-
-        except HTTPError as http_err:
-            self.logger.error(f'HTTP error during Door get_mode: {http_err}')
-        except Exception as err:
-            self.logger.error(f'Other error during Door get_mode: {err}')
-        return DoorMode.MODE_UNKNOWN
 
 
     def sys_ping(self):

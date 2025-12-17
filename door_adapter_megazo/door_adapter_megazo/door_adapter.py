@@ -22,39 +22,42 @@ class DoorAdapter(Node):
         self.get_logger().info(f'Initialising [ {NODE_NAME} ]...')
 
         # Get value from config file
-        self.door_name = config_yaml['door']['name']
-        self.door_close_feature = config_yaml['door']['door_close_feature']
-        self.door_signal_period = config_yaml['door']['door_signal_period']
-        self.door_state_publish_period = config_yaml['door_publisher']['door_state_publish_period']
+        self.get_logger().debug(f'Adding {len(config_yaml['doors'])} doors...')
+
+        self.doors = {}
+        for key, value in config_yaml['doors'].items():
+            self.get_logger().debug(f'Adding door: [ {key} ]')
+            self.get_logger().debug(f'Door Data = [ {value} ]')
+            self.doors[key] = value
+            # Default door mode is CLOSED.
+            self.doors[key]['door_mode'] = DoorMode.MODE_CLOSED
 
         url = config_yaml['api_endpoint']
         mqtt_endpoint = config_yaml['mqtt_endpoint']
         mqtt_port = config_yaml['mqtt_port']
 
-        mqtt_topic = config_yaml['door']['mqtt_topic']
-        username = config_yaml['door']['username']
-        password = config_yaml['door']['password']
-        mqtt_password = config_yaml['door']['mqtt_password']
-        mqtt_client_id = config_yaml['door']['mqtt_client_id']
-        project_id = config_yaml['door']['project_id']
-        ICED_id = config_yaml['door']['ICED_id']
-        
+        mqtt_topic = config_yaml['mqtt_topic']
+        username = config_yaml['username']
+        password = config_yaml['password']
+        mqtt_password = config_yaml['mqtt_password']
+        mqtt_client_id = config_yaml['mqtt_client_id']
+        project_id = config_yaml['project_id']
+
         door_pub = config_yaml['door_publisher']
         door_sub = config_yaml['door_subscriber']
+        self.door_state_publish_period = config_yaml['door_publisher']['door_state_publish_period']
 
         self.api = DoorClientAPI(
             url,
             username,
             password,
             project_id,
-            ICED_id,
+            self.doors,
             self.get_logger()
         )
-       
+
         assert self.api.connected, "Unable to establish connection with door"
-        
-        # default door state - closed mode
-        self.door_mode = DoorMode.MODE_CLOSED
+
         # open door flag
         self.open_door = False
         self.check_status = True #ensure initial door state is correct
@@ -105,13 +108,23 @@ class DoorAdapter(Node):
         decoded_message=str(msg.payload.decode("utf-8"))
         msg_=json.loads(decoded_message)
         mqttEvent = msg_['doorEvent']['EventType']
-        self.get_logger().info(f"Detected New MQTT Event - [ {MQTT_EVENTTYPE[str(mqttEvent)]} ]")
+
+        detected_device_name = None
+        for device_name, _ in self.doors.items():
+            if device_name in msg_['doorEvent']['ControllerName']:
+                detected_device_name = device_name
+
+        if detected_device_name is None:
+            self.get_logger().debug(f"No devices matching [ {msg_['doorEvent']['ControllerName']} ]. Ignoring...")
+            return
+
+        self.get_logger().info(f"Detected New MQTT Event - [{mqttEvent}][ {MQTT_EVENTTYPE[str(mqttEvent)]} ] on [ {msg_['doorEvent']['ControllerName']} ]")
         self.get_logger().debug(f"{msg_}")
 
-        if mqttEvent == 3:
-            self.door_mode = DoorMode.MODE_CLOSED
-        elif mqttEvent == 4 or mqttEvent == 14:
-            self.door_mode = DoorMode.MODE_OPEN
+        if mqttEvent == 1020:
+            self.doors[detected_device_name]['door_mode'] = DoorMode.MODE_CLOSED
+        elif mqttEvent == 1019:
+            self.doors[detected_device_name]['door_mode'] = DoorMode.MODE_OPEN
 
 
     def on_connect_mqtt(self, client, userdata, flags, rc, properties):
@@ -124,14 +137,14 @@ class DoorAdapter(Node):
         self.get_logger().error(f"Disconnected: {reasonCode}")
 
 
-    def door_open_command_request(self):
+    def door_open_command_request(self, door_name: str):
         while self.open_door:
-            success = self.api.open_door()
+            success = self.api.open_door(self.doors[door_name]['ICED_id'])
             if success:
-                self.get_logger().warn(f"Request to open door [{self.door_name}] is successful")
+                self.get_logger().warn(f"Request to open door [{door_name}] is successful")
             else:
-                self.get_logger().warn(f"Request to open door [{self.door_name}] is unsuccessful")
-            time.sleep(self.door_signal_period)
+                self.get_logger().warn(f"Request to open door [{door_name}] is unsuccessful")
+            time.sleep(self.doors[door_name]['door_signal_period'])
 
 
     def time_cb(self):
@@ -139,10 +152,11 @@ class DoorAdapter(Node):
         state_msg = DoorState()
         state_msg.door_time = self.get_clock().now().to_msg()
 
-        # publish states of the door
-        state_msg.door_name = self.door_name
-        state_msg.current_mode.value = self.door_mode
-        self.door_states_pub.publish(state_msg)
+        # Publish states of the door
+        for door_name, _ in self.doors.items():
+            state_msg.door_name = door_name
+            state_msg.current_mode.value = self.doors[door_name]['door_mode']
+            self.door_states_pub.publish(state_msg)
 
 
     def door_request_cb(self, msg: DoorRequest):
@@ -153,26 +167,36 @@ class DoorAdapter(Node):
         self.get_logger().warn(f"Door Request - [ RECEIVED ]")
         self.get_logger().debug(f"Door Request - {msg}")
 
-        if msg.door_name == self.door_name:
+        is_requested_door_in_list = False
+        for door_name, _ in self.doors.items():
+            if door_name == msg.door_name:
+                is_requested_door_in_list = True
+                break
+
+        if is_requested_door_in_list:
             self.get_logger().info(f"Door mode [{msg.requested_mode.value}] requested by {msg.requester_id}")
             if msg.requested_mode.value == DoorMode.MODE_OPEN:
                 # open door implementation
                 self.open_door = True
                 self.check_status = True
-                if self.door_close_feature:
+                if self.doors[msg.door_name]['door_close_feature']:
                     self.get_logger().info('Commanding Door - [ OPEN ]')
-                    self.api.open_door()
+                    self.api.open_door(self.doors[msg.door_name]['ICED_id'])
                 else:
-                    t = threading.Thread(target = self.door_open_command_request)
+                    t = threading.Thread(target = self.door_open_command_request(msg.door_name))
                     t.start()
             elif msg.requested_mode.value == DoorMode.MODE_CLOSED:
                 # close door implementation
                 self.open_door = False
-                if self.door_close_feature:
+                if self.doors[msg.door_name]['door_close_feature']:
                     self.get_logger().info('Commanding Door - [ CLOSE ]')
-                    self.api.close_door()
+                    self.api.close_door(self.doors[msg.door_name]['ICED_id'])
+                else:
+                    self.get_logger().info(f'Door [ {msg.door_name} ] does not have Close Door API. Ignoring...')
             else:
                 self.get_logger().error('Invalid door mode requested. Ignoring...')
+        else:
+            self.get_logger().error(f'Unable to find requested door [ {msg.door_name} ]. Ignoring...')
 
 ###############################################################################
 
