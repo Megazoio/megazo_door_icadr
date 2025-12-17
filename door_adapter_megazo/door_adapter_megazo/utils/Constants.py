@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-NODE_NAME='door_adapter_megazo'
+NODE_NAME = 'door_adapter_megazo'
 
 MQTT_EVENTTYPE = {
             '3': 'Door magnetic closure',
@@ -35,32 +35,33 @@ MQTT_EVENTTYPE = {
 
 # Unused. Preserved in case of feature expansion.
 # MQTT_EVENTRESULT = {
-#             "0":"NULL",
-#             "1":"Permission to pass",
-#             "2":"Illegal cards",
-#             "3":"Wrong time period",
-#             "4":"No Passage",
-#             "5":"Card capacity is full",
-#             "6":"Repeat card addition",
-#             "7":"Delete cards that don't exist in the first place",
-#             "8":"Password error",
-#             "9":"Work number does not exist",
-#             "10":"The work number exists, but the use of the password to open the door is prohibited",
-#             "11":"This door prohibits the use of the password to open the door",
-#             "12":"Violation of Antipassbac's Normal mode",
-#             "13":"Multi-card mode, timeout between swipes of two cards",
-#             "14":"Multi-card mode, whether the card is passable or not is undetermined.",
-#             "15":"Multi-card mode with more than 20 visitor swipes",
-#             "16":"Multi-card mode, employees swipe more than 20 cards",
-#             "17":"This door is in interlock, the door is not open",
-#             "19":"Repeated PIN's status",
-#             "24":"User card exceeds expiration date",
-#             "26":"Denied",
-#             "1000":"Success",
-#             "1001":"Failure",
-#             "1002":"Failure",
-#             "1003":"Success",
-#             "1004":"Main control board offline",
-#             "1005":"Trigger",
-#             "1006":"Recovery"
+#             '0':'NULL',
+#             '1':'Permission to pass',
+#             '2':'Illegal cards',
+#             '3':'Wrong time period',
+#             '4':'No Passage',
+#             '5':'Card capacity is full',
+#             '6':'Repeat card addition',
+#             '7':'Delete cards that don't exist in the first place',
+#             '8':'Password error',
+#             '9':'Work number does not exist',
+#             '10':'The work number exists, but the use of the password to '
+#                  'open the door is prohibited',
+#             '11':'This door prohibits the use of the password to open the door',
+#             '12':'Violation of Antipassbac's Normal mode',
+#             '13':'Multi-card mode, timeout between swipes of two cards',
+#             '14':'Multi-card mode, whether the card is passable or not is undetermined.',
+#             '15':'Multi-card mode with more than 20 visitor swipes',
+#             '16':'Multi-card mode, employees swipe more than 20 cards',
+#             '17':'This door is in interlock, the door is not open',
+#             '19':'Repeated PIN's status',
+#             '24':'User card exceeds expiration date',
+#             '26':'Denied',
+#             '1000':'Success',
+#             '1001':'Failure',
+#             '1002':'Failure',
+#             '1003':'Success',
+#             '1004':'Main control board offline',
+#             '1005':'Trigger',
+#             '1006':'Recovery'
 #         }
