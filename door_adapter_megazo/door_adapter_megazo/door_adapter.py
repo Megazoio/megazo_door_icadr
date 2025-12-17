@@ -105,7 +105,7 @@ class DoorAdapter(Node):
         decoded_message=str(msg.payload.decode("utf-8"))
         msg_=json.loads(decoded_message)
         mqttEvent = msg_['doorEvent']['EventType']
-        self.get_logger().info(f"Detected New MQTT Event - [ {MQTT_EVENTTYPE[mqttEvent]} ]")
+        self.get_logger().info(f"Detected New MQTT Event - [ {MQTT_EVENTTYPE[str(mqttEvent)]} ]")
         self.get_logger().debug(f"{msg_}")
 
         if mqttEvent == 3:
@@ -150,7 +150,7 @@ class DoorAdapter(Node):
         # If door node receive close request, the door adapter will stop sending open command to API
         # check DoorRequest msg whether the door name of the request is same as the current door. If not, ignore the request
 
-        self.get_logger().warn(f"dDoor Request - [ RECEIVED ]")
+        self.get_logger().warn(f"Door Request - [ RECEIVED ]")
         self.get_logger().debug(f"Door Request - {msg}")
 
         if msg.door_name == self.door_name:
