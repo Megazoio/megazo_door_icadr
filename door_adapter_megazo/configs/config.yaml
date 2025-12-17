@@ -1,24 +1,29 @@
 # MEGAZO RMF Door Parameters
 
-door:
-  name: "XXXXXXXXXXXXXX" #INSERT DOOR NAME HERE. IT MUST MIRROR DOOR NAME ON RMF TRAFFIC EDITOR.
-  api_endpoint: "https://www.evcard.cc:8181"
-  mqtt_endpoint: "www.evcard.cc"
-  mqtt_port: 8090
-  mqtt_topic: ICEDEvent_XX
-  username: "XXXXXXXXXXXXXX"
-  password: "XXXXXXXXXXXXXX"
-  mqtt_password: 'XXXXXXXXXXXXXX'
-  mqtt_client_id: 'XXXXXXXXXXXXXX'
-  project_id: XXXXXXXXXXXXXX
-  ICED_id: XXXXXXXXXXXXXX
+doors:
+  "XXXXXXXXXXXXXXXXXXX": # Insert door name here. It must mirror door name on RMF Traffic Editor.
+    ICED_id: XXXXXXXXXXXXXXXXXXX
+    door_signal_period: 3.0 # In seconds
+    door_close_feature: True # True if door close API is available
+  "XXXXXXXXXXXXXXXXXXX": # Insert door name here. It must mirror door name on RMF Traffic Editor.
+    ICED_id: XXXXXXXXXXXXXXXXXXX
+    door_signal_period: 3.0 # In seconds
+    door_close_feature: True # True if door close API is available
 
-  door_signal_period: 3.0 # Seconds
-  door_close_feature: True # True if door close API is available
+api_endpoint: "https://www.evcard.cc:8181"
+username: "XXXXXXXXXXXXXXXXXXX"
+password: "XXXXXXXXXXXXXXXXXXX"
+
+mqtt_endpoint: "www.evcard.cc"
+mqtt_port: 8090
+mqtt_password: 'XXXXXXXXXXXXXXXXXXX'
+mqtt_client_id: 'XXXXXXXXXXXXXXXXXXX'
+project_id: XXXXXXXXXXXXXXXXXXX
+mqtt_topic: XXXXXXXXXXXXXXXXXXX
 
 door_subscriber:
   topic_name: "adapter_door_requests"
 
 door_publisher:
   topic_name: "door_states"
-  door_state_publish_period: 1.0 # Seconds
+  door_state_publish_period: 1.0 # In seconds
