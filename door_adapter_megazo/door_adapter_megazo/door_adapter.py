@@ -1,8 +1,8 @@
 import sys
 import yaml
-import argparse
-
+import json
 import time
+import argparse
 import threading
 
 import rclpy
@@ -13,7 +13,6 @@ from rmf_door_msgs.msg import DoorRequest, DoorState, DoorMode
 import paho.mqtt.client as mqtt
 from paho.mqtt.properties import Properties
 from paho.mqtt.packettypes import PacketTypes 
-import json
 
 
 ###############################################################################
