@@ -3,7 +3,7 @@
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-# What Is This?
+# **What Is This**?
 This repository contains the Robotics Middleware Framework (**RMF**) **Door Adapter** for interfacing with **MEGAZO Technologies**'s ICADR-based IoT-enabled doors.
 
 | :point_up: Looking to convert a legacy door to allow robot-human door sharing?               |
