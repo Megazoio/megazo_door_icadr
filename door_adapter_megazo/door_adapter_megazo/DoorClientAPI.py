@@ -1,6 +1,5 @@
-import requests
 import time
-from rmf_door_msgs.msg import DoorMode
+import requests
 from urllib.error import HTTPError
 
 

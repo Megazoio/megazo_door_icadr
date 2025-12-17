@@ -13,7 +13,7 @@ from rclpy.node import Node
 from rmf_door_msgs.msg import DoorRequest, DoorState, DoorMode
 
 from door_adapter_megazo.DoorClientAPI import DoorClientAPI
-from door_adapter_megazo.utils.Constants import NODE_NAME, MQTT_EVENTRESULT, MQTT_EVENTTYPE
+from door_adapter_megazo.utils.Constants import NODE_NAME, MQTT_EVENTTYPE
 
 
 class DoorAdapter(Node):
