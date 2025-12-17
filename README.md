@@ -1,7 +1,8 @@
 # What Is This?
-This repository contains the Robotics Middleware Framework (**RMF**) **Door Adapter** for interfacing with MEGAZO Technologies's ICADR-based IoT-enabled doors.
+This repository contains the Robotics Middleware Framework (**RMF**) **Door Adapter** for interfacing with **MEGAZO Technologies**'s ICADR-based IoT-enabled doors.
 
-Looking to convert a legacy door to allow robot-human door sharing? Megazo ICADR is an IoT device that takes in dry contacts from the door and convert it to a cloud accessible door. 
+| :point_up:    | Looking to convert a legacy door to allow robot-human door sharing? MEGAZO ICADR is an IoT (Internet of Things) device that takes in dry contacts from the door and makes it cloud-accessible! |
+|---------------|:----------------------------------------|
 
 It is fully compatible with [RMF](https://github.com/open-rmf/rmf_ros2) and [SS-713](https://www.singaporestandardseshop.sg/Product/SSPdtDetail/4bc72ff7-951f-4a5e-b85f-edafe36a8a3d).
 
