@@ -27,11 +27,11 @@ class DoorClientAPI:
         self.connected = True
         while not self.check_connection():
             if count >= 5:
-                self.logger.error("Unable to connect to door client API.")
+                self.logger.error("Unable to connect to door client API after 5 attempts. Exiting...")
                 self.connected = False
                 break
             else:
-                self.logger.warn("Unable to connect to door client API. Attempting to reconnect...")
+                self.logger.warn(f"Unable to connect to door client API. Attempting to reconnect [{str(count)}/5]...")
                 count += 1
             time.sleep(1)
 
