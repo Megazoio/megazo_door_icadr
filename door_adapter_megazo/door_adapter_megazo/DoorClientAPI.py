@@ -40,7 +40,7 @@ class DoorClientAPI:
 
         count = 0
         self.connected = True
-        while not self.check_connection():
+        while not self._check_connection():
             if count >= 5:
                 self.logger.error('Unable to connect to door client '
                                   'API after 5 attempts. Exiting...')
@@ -52,14 +52,15 @@ class DoorClientAPI:
                 count += 1
             time.sleep(1)
 
-    def check_connection(self):
-        if self.Login():
-            if self.ProjectSignIn():
+    def _check_connection(self):
+        if self._login():
+            if self._signin_project():
                 if self.check_devices_online():
                     return True
         return False
 
-    def Login(self):
+    def _login(self) -> bool:
+        """Return True if authentication token has been retrieved successfully."""
         url = self.prefix + '/API/System/Login'
         data = {}
         data['data'] = {'UserID': self.user, 'Password': self.passcode}
@@ -81,7 +82,8 @@ class DoorClientAPI:
             self.logger.error(f'Other error during Login: {err}')
         return False
 
-    def ProjectSignIn(self):
+    def _signin_project(self) -> bool:
+        """Return True if specific project has been successfully signed into."""
         url = self.prefix + '/API/System/ProjectSignIn'
         data = {}
         data['UserID'] = self.user
@@ -105,6 +107,7 @@ class DoorClientAPI:
         return False
 
     def check_devices_online(self):
+        """Return True if all devices in project is online."""
         url = self.prefix + '/API/ICED/GetICEDList'
         data = {}
         data['UserID'] = self.user
