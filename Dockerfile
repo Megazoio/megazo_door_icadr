@@ -1,5 +1,5 @@
-FROM ros:jazzy-ros-base
-ENV ROS_DISTRO=jazzy
+FROM ros:humble-ros-base
+ENV ROS_DISTRO=humble
 
 # Install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \

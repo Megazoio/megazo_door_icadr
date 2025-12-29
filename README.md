@@ -17,7 +17,7 @@ It is fully compatible with [RMF](https://github.com/open-rmf/rmf_ros2) and [SS-
 
 
 # **Dependencies** 📚
-- ROS 2 [Jazzy Jalisco](https://docs.ros.org/en/jazzy/Installation.html)
+- ROS 2 [Humble Hawksbill](https://docs.ros.org/en/humble/Installation.html)
 
 # **Configurations**
 Contact [hello@megazo.io](mailto:hello@megazo.io) to be provided with API credentials which will be inserted in [config.yaml](door_adapter_megazo/config.yaml).
