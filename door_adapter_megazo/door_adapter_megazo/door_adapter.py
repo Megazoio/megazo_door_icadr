@@ -19,7 +19,9 @@ import threading
 import time
 
 from door_adapter_megazo.DoorClientAPI import DoorClientAPI
-from door_adapter_megazo.utils.Constants import MQTT_EVENTTYPE, NODE_NAME
+from door_adapter_megazo.utils.Constants import NODE_NAME
+from door_adapter_megazo.utils.Constants import MQTT_EVENTTYPE
+from door_adapter_megazo.utils.Constants import DoorOperationAction
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.packettypes import PacketTypes
@@ -161,7 +163,10 @@ class DoorAdapter(Node):
 
     def door_open_command_request(self, door_name: str):
         while self.open_door:
-            success = self.api.open_door(self.doors[door_name]['ICED_id'])
+            success = self.api.command_door(
+                self.doors[door_name]['ICED_id'],
+                DoorOperationAction.DOOR_OPEN
+                )
             if success:
                 self.get_logger().warn(f'Request to open door [{door_name}] is successful')
             else:
@@ -205,7 +210,10 @@ class DoorAdapter(Node):
                 self.check_status = True
                 if self.doors[msg.door_name]['door_close_feature']:
                     self.get_logger().info('Commanding Door - [ OPEN ]')
-                    self.api.open_door(self.doors[msg.door_name]['ICED_id'])
+                    self.api.command_door(
+                        self.doors[msg.door_name]['ICED_id'],
+                        DoorOperationAction.DOOR_OPEN
+                        )
                 else:
                     t = threading.Thread(
                         target=self.door_open_command_request(msg.door_name))
@@ -215,7 +223,10 @@ class DoorAdapter(Node):
                 self.open_door = False
                 if self.doors[msg.door_name]['door_close_feature']:
                     self.get_logger().info('Commanding Door - [ CLOSE ]')
-                    self.api.close_door(self.doors[msg.door_name]['ICED_id'])
+                    self.api.command_door(
+                        self.doors[msg.door_name]['ICED_id'],
+                        DoorOperationAction.DOOR_CLOSE
+                        )
                 else:
                     self.get_logger().info(f'Door [ {msg.door_name} ] does not '
                                            'have Close Door API. Ignoring...')

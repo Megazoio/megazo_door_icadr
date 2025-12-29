@@ -12,7 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from enum import IntEnum
+
 NODE_NAME = 'door_adapter_megazo'
+
+class DoorOperationAction(IntEnum):
+    DOOR_OPEN = 1
+    DOOR_CLOSE = 2
 
 MQTT_EVENTTYPE = {
             '3': 'Door magnetic closure',

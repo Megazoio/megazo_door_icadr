@@ -134,13 +134,13 @@ class DoorClientAPI:
 
         return True
 
-    def open_door(self, device_ICED_id):
-        """Return True if the door API server is successful receive open door command."""
+    def command_door(self, device_ICED_id: int, op_action: int) -> bool:
+        """Return True if the door API server returns successful when door command is received."""
         url = self._prefix + '/API/Device/ICED/ControlDoor'
         data = {}
         data['UserID'] = self._user
         data['Token'] = self._token
-        data['data'] = {'IDs': [device_ICED_id], 'Operate': 1}
+        data['data'] = {'IDs': [device_ICED_id], 'Operate': op_action}
 
         try:
             response = requests.post(url, timeout=self._timeout, json=data)
@@ -155,29 +155,6 @@ class DoorClientAPI:
             self._logger.error(f'HTTP error during Open Door: {http_err}')
         except Exception as err:
             self._logger.error(f'Other error during Open Door: {err}')
-        return False
-
-    def close_door(self, device_ICED_id):
-        """Return True if the door API server is successful receive open door command."""
-        url = self._prefix + '/API/Device/ICED/ControlDoor'
-        data = {}
-        data['UserID'] = self._user
-        data['Token'] = self._token
-        data['data'] = {'IDs': [device_ICED_id], 'Operate': 2}
-
-        try:
-            response = requests.post(url, timeout=self._timeout, json=data)
-            data = response.json()
-
-            if data['IsSuccess'] is True:
-                return True
-            else:
-                self._logger.error('API: Close Door Failed')
-
-        except HTTPError as http_err:
-            self._logger.error(f'HTTP error during Close Door: {http_err}')
-        except Exception as err:
-            self._logger.error(f'Other error during Close Door: {err}')
         return False
 
     def ping_system(self) -> bool:
