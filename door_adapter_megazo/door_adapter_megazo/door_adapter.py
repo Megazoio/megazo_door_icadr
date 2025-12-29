@@ -19,9 +19,9 @@ import threading
 import time
 
 from door_adapter_megazo.DoorClientAPI import DoorClientAPI
-from door_adapter_megazo.utils.Constants import NODE_NAME
-from door_adapter_megazo.utils.Constants import MQTT_EVENTTYPE
 from door_adapter_megazo.utils.Constants import DoorOperationAction
+from door_adapter_megazo.utils.Constants import MQTT_EVENTTYPE
+from door_adapter_megazo.utils.Constants import NODE_NAME
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.packettypes import PacketTypes
