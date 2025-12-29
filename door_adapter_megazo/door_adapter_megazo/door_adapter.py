@@ -169,7 +169,7 @@ class DoorAdapter(Node):
             time.sleep(self.doors[door_name]['door_signal_period'])
 
     def time_cb(self):
-        assert self.api.sys_ping(), 'Unable to ping connection with door'
+        assert self.api.ping_system(), 'Unable to ping connection with door'
         state_msg = DoorState()
         state_msg.door_time = self.get_clock().now().to_msg()
 

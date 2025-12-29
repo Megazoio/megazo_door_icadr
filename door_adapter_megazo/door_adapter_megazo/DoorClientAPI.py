@@ -177,7 +177,8 @@ class DoorClientAPI:
             self.logger.error(f'Other error during Close Door: {err}')
         return False
 
-    def sys_ping(self):
+    def ping_system(self) -> bool:
+        """Return True if ICADR system was pinged for token refreshing."""
         url = self.prefix + '/API/SYSTEM/Ping'
         data = {}
         data['UserID'] = self.user
